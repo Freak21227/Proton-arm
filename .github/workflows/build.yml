@@ -20,14 +20,28 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+
       - name: Add deb-src to sources.list
         run: |
-          sudo tee -a /etc/apt/sources.list > /dev/null <<EOF
-          deb-src http://archive.ubuntu.com/ubuntu/ jammy main restricted universe multiverse
-          deb-src http://archive.ubuntu.com/ubuntu/ jammy-updates main restricted universe multiverse
-          deb-src http://archive.ubuntu.com/ubuntu/ jammy-backports main restricted universe multiverse
-          deb-src http://security.ubuntu.com/ubuntu jammy-security main restricted universe multiverse
+          CODENAME=$(. /etc/os-release && echo "$VERSION_CODENAME")
+          DEB822_FILE="/etc/apt/sources.list.d/ubuntu.sources"
+
+          if [ -f "$DEB822_FILE" ]; then
+            # Ubuntu 24.04+ (Noble ve sonrası) deb822 formatını kullanır:
+            # kaynaklar /etc/apt/sources.list.d/ubuntu.sources dosyasında,
+            # "Types: deb" şeklinde tanımlı ve deb-src satırı yoktur.
+            echo "deb822 formatı tespit edildi ($DEB822_FILE), deb-src ekleniyor..."
+            sudo sed -i 's/^Types: deb$/Types: deb deb-src/' "$DEB822_FILE"
+          else
+            # Ubuntu 22.04 ve öncesi: klasik tek satırlık sources.list formatı
+            echo "Klasik sources.list formatı tespit edildi, deb-src ekleniyor..."
+            sudo tee -a /etc/apt/sources.list > /dev/null <<EOF
+          deb-src http://archive.ubuntu.com/ubuntu/ ${CODENAME} main restricted universe multiverse
+          deb-src http://archive.ubuntu.com/ubuntu/ ${CODENAME}-updates main restricted universe multiverse
+          deb-src http://archive.ubuntu.com/ubuntu/ ${CODENAME}-backports main restricted universe multiverse
+          deb-src http://security.ubuntu.com/ubuntu ${CODENAME}-security main restricted universe multiverse
           EOF
+          fi
           sudo apt-get update
 
       - name: Install llvm-mingw (bylaws fork)
