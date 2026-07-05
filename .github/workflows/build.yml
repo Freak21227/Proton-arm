@@ -94,7 +94,9 @@ jobs:
             libxkbcommon-dev \
             libxkbregistry-dev \
             flex bison \
-            autoconf
+            autoconf \
+            ocl-icd-opencl-dev \
+            opencl-headers
 
       - name: Download Proton source
         run: |
