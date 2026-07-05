@@ -1,0 +1,30 @@
+From: Build Fix <fix@proton-arm.local>
+Date: Sun, 5 Jul 2026 19:12:00 +0000
+Subject: [PATCH] Fix GStreamer API compatibility: Replace GstBufferMapInfo with GstMapInfo
+
+GStreamer no longer exports GstBufferMapInfo in recent versions.
+Replace with GstMapInfo which is the correct type for buffer mapping operations.
+
+This resolves compilation errors:
+- error: unknown type name 'GstBufferMapInfo'; did you mean 'GstMapInfo'?
+- error: request for member 'data' in something not a structure or union
+- error: request for member 'size' in something not a structure or union
+
+---
+ dlls/winegstreamer/media-converter/videoconv.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/dlls/winegstreamer/media-converter/videoconv.c b/dlls/winegstreamer/media-converter/videoconv.c
+index 1234567..abcdefg 100644
+--- a/dlls/winegstreamer/media-converter/videoconv.c
++++ b/dlls/winegstreamer/media-converter/videoconv.c
+@@ -983,7 +983,7 @@ static GstFlowReturn video_conv_sink_chain(GstPad *pad, GstObject *parent, GstBu
+     if (!(transcoded = gst_buffer_new_and_alloc(downstream_end - downstream_offset)))
+         return GST_FLOW_ERROR;
+     else
+     {
+-        GstBufferMapInfo map;
++        GstMapInfo map;
+         size_t fill_size = 0;
+ 
+         if (gst_buffer_map(transcoded, &map, GST_MAP_READWRITE))
