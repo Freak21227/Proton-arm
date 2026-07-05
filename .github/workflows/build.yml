@@ -108,8 +108,11 @@ jobs:
           done
 
       - name: Autogen
-        run: ./autogen.sh
-        
+        run: |
+          cd "$PROTON_DIR"
+          ./autogen.sh
+
+          
       - name: Configure
         run: |
           cd "$PROTON_DIR"
