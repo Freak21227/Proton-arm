@@ -38,6 +38,20 @@ jobs:
           DIRNAME=$(ls /opt | grep llvm-mingw)
           echo "/opt/${DIRNAME}/bin" >> $GITHUB_PATH
 
+      - name: Fix libunwind-dev conflict
+        run: |
+          # GitHub'ın ARM64 runner imajında önceden kurulu bir LLVM paketi
+          # (libunwind-14-dev / libunwind-18-dev vb.) "Breaks: libunwind-dev"
+          # dediği için gerçek Ubuntu libunwind-dev paketi kurulamıyor.
+          # Bu çakışan paketi kaldırıp gerçek libunwind-dev'i kuruyoruz.
+          CONFLICTING=$(dpkg -l | awk '/^ii[[:space:]]+libunwind-[0-9]+-dev/ {print $2}')
+          if [ -n "$CONFLICTING" ]; then
+            echo "Removing conflicting packages: $CONFLICTING"
+            sudo apt-get purge -y $CONFLICTING
+          fi
+          sudo apt-get update
+          sudo apt-get install -y libunwind-dev
+
       - name: Install build dependencies
         run: |
           sudo apt-get build-dep -y wine
