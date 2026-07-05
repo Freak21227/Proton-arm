@@ -107,6 +107,9 @@ jobs:
             fi
           done
 
+      - name: Autogen
+        run: ./autogen.sh
+        
       - name: Configure
         run: |
           cd "$PROTON_DIR"
