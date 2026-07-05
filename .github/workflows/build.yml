@@ -138,6 +138,8 @@ jobs:
             --with-vulkan \
             --with-wayland \
             --enable-archs=arm64ec,aarch64,i386 \
+            --without-opencl
+            
 
       - name: Build
         run: |
