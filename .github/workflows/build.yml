@@ -137,6 +137,7 @@ jobs:
             --disable-tests \
             --with-vulkan \
             --with-wayland \
+            --with-mingw=clang \
             --enable-archs=arm64ec,aarch64,i386 \
             --without-opencl
             
