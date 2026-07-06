@@ -10,7 +10,7 @@ permissions:
 
 env:
   FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
-  PROTON_URL: https://github.com/ValveSoftware/wine/archive/refs/tags/experimental-wine-bleeding-edge-11.0-391323-20260705-p918c96-wc37dd7-dd11701-vf1338a.zip
+  PROTON_URL: https://github.com/ValveSoftware/wine/archive/refs/heads/proton_10.0.zip
   INSTALL_PREFIX: ${{ github.workspace }}/dist
 
 jobs:
@@ -150,7 +150,7 @@ jobs:
       - name: Compress
         run: |
           BUILD_DATE=$(date +%Y-%m-%d)
-          ARTIFACT_NAME="proton-11.0-arm64ec-${BUILD_DATE}"
+          ARTIFACT_NAME="proton-10.0-arm64ec-${BUILD_DATE}"
           tar -cJf "${ARTIFACT_NAME}.tar.xz" -C "$INSTALL_PREFIX" .
           echo "ARTIFACT_NAME=${ARTIFACT_NAME}" >> $GITHUB_ENV
 
